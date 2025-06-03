@@ -11,7 +11,7 @@ MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q4_M = './models/Llama-3-ELYZA-JP-8B-q4_k_m.gguf'
 MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6 = './models/Llama-3-ELYZA-JP-8B.i1-Q6_K.gguf'
 
 # llmModel: LlmModel = Llama3ElyzaJp8b()
-llmModel: LlmModel = Llama3ElyzaJpGguf(MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6)
+llmModel: LlmModel = Llama3ElyzaJpGguf(MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6, True)
 app: Flask = Flask(__name__)
 llmChatHistory: List[LlmChatItem] = []
 

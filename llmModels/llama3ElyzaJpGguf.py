@@ -4,11 +4,11 @@ from typing import *
 from llmModels.llmModel import *
 
 class Llama3ElyzaJpGguf(LlmModel):
-  def __init__(self, modelPath: str):
+  def __init__(self, modelPath: str, useGpu: bool = True):
     self._model: Llama
     self._modelPath: str = modelPath
 
-    super().__init__()
+    super().__init__(useGpu)
 
   def _llmChatItemList2PromptStr(self, list: List[LlmChatItem]) -> str:
     promptStr: str = ''
@@ -21,12 +21,14 @@ class Llama3ElyzaJpGguf(LlmModel):
     return promptStr
 
   def resetModel(self):
+    gpuLayers: int = 32 if self._useGpu else 0
+
     super().resetModel()
 
     self._model = Llama(
       model_path = self._modelPath,
       n_ctx = 2048,
-      n_gpu_layers = 32
+      n_gpu_layers = gpuLayers
     )
 
   def talk(self, messages: List[LlmChatItem]) -> str:

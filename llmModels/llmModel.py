@@ -15,9 +15,10 @@ class LlmChatItem:
     return {'role': self.role.value, 'content': self.content}
 
 class LlmModel:
-  def __init__(self):
+  def __init__(self, useGpu: bool = True):
     self._tokenizer: any = None
     self._model: any = None
+    self._useGpu: bool = useGpu
 
     self.resetModel()
 

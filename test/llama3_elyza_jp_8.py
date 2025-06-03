@@ -2,8 +2,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 DEFAULT_SYSTEM_PROMPT = "あなたは誠実で優秀な日本人のアシスタントです。特に指示が無い場合は、常に日本語で回答してください。"
-# text = "仕事の熱意を取り戻すためのアイデアを5つ挙げてください。"
-text = "クイックソートのプログラム"
+text = "仕事の熱意を取り戻すためのアイデアを5つ挙げてください。"
 
 model_name = "elyza/Llama-3-ELYZA-JP-8B"
 
