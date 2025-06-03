@@ -1,0 +1,44 @@
+body{
+  background: rgb(64, 64, 64);
+  color: white;
+}
+
+#headerArea{
+  display: flex;
+  height: 60px;
+}
+
+#contentArea{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(calc(100% - calc(60px + 100px)));
+}
+
+#chatArea{
+  display: flex;
+  width: 95%;
+  height: 95%;
+  border: solid 1px white;
+  border-radius: 8px;
+  overflow-y: scroll;
+}
+
+#footerArea{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100px);
+}
+
+#talkFormArea{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 95%;
+}
+
+#talkFormInput{
+  margin-right: 10px;
+}
