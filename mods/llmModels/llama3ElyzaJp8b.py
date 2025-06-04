@@ -1,7 +1,7 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import *
 
-from llmModels.llmModel import *
+from mods.llmModels.llmModel import *
 
 LLM_MODEL_NAME_ELYZA_JP_8B: str = 'elyza/Llama-3-ELYZA-JP-8B'
 

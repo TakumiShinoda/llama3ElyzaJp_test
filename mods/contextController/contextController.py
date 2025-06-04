@@ -3,7 +3,7 @@ import json
 from io import TextIOWrapper
 from typing import *
 
-from llmModels.llmModel import *
+from mods.llmModels.llmModel import *
 
 DIR_NAME_CONTEXTS_SAVE: str = 'contexts'
 

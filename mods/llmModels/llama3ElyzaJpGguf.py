@@ -1,7 +1,7 @@
 from llama_cpp import Llama
 from typing import *
 
-from llmModels.llmModel import *
+from mods.llmModels.llmModel import *
 
 class Llama3ElyzaJpGguf(LlmModel):
   def __init__(self, modelPath: str, useGpu: bool = True):

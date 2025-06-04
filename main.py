@@ -1,10 +1,10 @@
 from flask import *
 from typing import *
 
-from llmModels.llmModel import *
-from llmModels.llama3ElyzaJp8b import *
-from llmModels.llama3ElyzaJpGguf import *
-from contextController.contextController import *
+from mods.llmModels.llmModel import *
+from mods.llmModels.llama3ElyzaJp8b import *
+from mods.llmModels.llama3ElyzaJpGguf import *
+from mods.contextController.contextController import *
 
 FLASK_IS_DEBUG_MODE: bool = False
 
