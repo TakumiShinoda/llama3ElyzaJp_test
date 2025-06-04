@@ -4,6 +4,7 @@ from typing import *
 from llmModels.llmModel import *
 from llmModels.llama3ElyzaJp8b import *
 from llmModels.llama3ElyzaJpGguf import *
+from contextController.contextController import *
 
 FLASK_IS_DEBUG_MODE: bool = False
 
@@ -14,7 +15,7 @@ MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6: str = './models/Llama-3-ELYZA-JP-8B.i1-Q6_K.gg
 
 app: Flask = Flask(__name__)
 llmModel: Union[LlmModel, None] = None
-llmChatHistory: List[LlmChatItem] = []
+llmContextController: ContextController
 
 @app.route('/')
 def routeMain():
@@ -31,16 +32,21 @@ def routeTalk():
   if(queryInputText == ''):
     return Response('Bad request.', status = 400)
   
-  llmChatHistory.append(LlmChatItem(LlmChatItemRoles.user, queryInputText))
-  llmResponse = llmModel.talk(llmChatHistory)
-  llmChatHistory.append(LlmChatItem(LlmChatItemRoles.system, llmResponse))
-  print([l.toDict() for l in llmChatHistory])
+  llmContextController.addContext(LlmChatItem(LlmChatItemRoles.user, queryInputText))
+  llmResponse = llmModel.talk(llmContextController.getContexts())
+  llmContextController.addContext(LlmChatItem(LlmChatItemRoles.system, llmResponse))
+  print([c.toDict() for c in llmContextController.getContexts()])
+
+  llmContextController.saveContexts()
 
   return llmResponse
 
 if __name__ == '__main__':
   if(not FLASK_IS_DEBUG_MODE):
-    llmModel = Llama3ElyzaJp8b()
-    # llmModel = Llama3ElyzaJpGguf(MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6, True)
+    # llmModel = Llama3ElyzaJp8b()
+    # llmContextController: ContextController = ContextController('elyza8b', False)
+
+    llmModel = Llama3ElyzaJpGguf(MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6, True)
+    llmContextController: ContextController = ContextController('elyza8bQuant', False)
 
   app.run(debug = FLASK_IS_DEBUG_MODE)
