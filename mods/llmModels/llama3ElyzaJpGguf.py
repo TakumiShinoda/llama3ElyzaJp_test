@@ -14,9 +14,14 @@ class Llama3ElyzaJpGguf(LlmModel):
     promptStr: str = ''
 
     for lci in list:
-      promptStr += f'{lci.role.value}: {lci.content}\n'
+      if(lci.role.value == 'system'):
+        promptStr += f'Assistant: {lci.content}\n'
+      elif(lci.role.value == 'user'):
+        promptStr += f'User: {lci.content}\n'
 
-    promptStr += 'assistant:'
+    promptStr += 'Assistant:'
+
+    print(promptStr)
 
     return promptStr
 
