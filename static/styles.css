@@ -9,6 +9,7 @@ body{
 }
 
 #contentArea{
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,6 +24,11 @@ body{
   border: solid 1px white;
   border-radius: 8px;
   overflow-y: scroll;
+}
+
+#chatLoadingAnim{
+  position: absolute;
+  display: none;
 }
 
 #footerArea{

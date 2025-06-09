@@ -35,7 +35,6 @@ def routeTalk():
   llmContextController.addContext(LlmChatItem(LlmChatItemRoles.user, queryInputText))
   llmResponse = llmModel.talk(llmContextController.getContexts())
   llmContextController.addContext(LlmChatItem(LlmChatItemRoles.system, llmResponse))
-  print([c.toDict() for c in llmContextController.getContexts()])
 
   llmContextController.saveContexts()
 
