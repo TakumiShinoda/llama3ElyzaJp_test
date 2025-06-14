@@ -14,6 +14,7 @@ $env:FORCE_CMAKE = 1
 ./env/Scripts/pip.exe install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
 
 ./env/Scripts/pip.exe install flask
+./env/Scripts/pip.exe install flask-socketio
 
 # for git-bash
 read -p "End to enter."
