@@ -1,7 +1,5 @@
 const API_HOST = 'http://localhost:5000'
 
-const Socket = io()
-
 function createSelectModelDropDownItemElements(modelList){
   let itemElements
   let itemElementsStr = ''
@@ -40,6 +38,7 @@ async function reloadSelectModelDropDown(){
   $('.modelSelectDropdownMenuListItem').on('click', async (ev) => {
     let selectedModel = $(ev.currentTarget).text()
 
+    $('#pageOverlayArea').css('display', 'flex')
     $('#modelSelectDropdownBtn').text(selectedModel)
 
     await fetch(`${API_HOST}/reloadModel?model=${selectedModel}`)
@@ -47,21 +46,12 @@ async function reloadSelectModelDropDown(){
   })
 
   dropdownBtnElement.text(modelListJson['currentModel'])
+  $('#pageOverlayArea').css('display', 'none')
 }
 
 $(async function (){
   await reloadSelectModelDropDown()
   $('body').css('display', 'flex')
-
-  Socket.on('lockOperation', () => {
-    console.log('lockOperation')
-    $('#pageOverlayArea').css('display', 'flex')
-  })
-
-  Socket.on('unlockOperation', () => {
-    console.log('unlockOperation')
-    $('#pageOverlayArea').css('display', 'none')
-  })
 
   $('#talkFormBtn').on('click', async () => {
     let formInputElement = $('#talkFormInput')

@@ -1,7 +1,6 @@
-import time
-from flask import *
-from flask_socketio import *
 from enum import Enum
+from functools import wraps
+from flask import *
 from typing import *
 
 from mods.llmModels.llmModel import *
@@ -26,10 +25,10 @@ MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q4_M: str = './models/Llama-3-ELYZA-JP-8B-q4_k_m.g
 MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6: str = './models/Llama-3-ELYZA-JP-8B.i1-Q6_K.gguf'
 
 app: Flask = Flask(__name__)
-socketio: SocketIO = SocketIO(app)
 llmModel: Union[LlmModel, None] = None
 llmContextController: ContextController
 currentLlmModel: SupportLlmModels = DEFAULT_LLM_MODEL
+isLockingApi: bool = False
 
 def loadLlmModel(model: SupportLlmModels) -> LlmModel:
   result: LlmModel
@@ -47,16 +46,6 @@ def loadLlmModel(model: SupportLlmModels) -> LlmModel:
 
   return result
 
-def sendLockOperation():
-  time.sleep(0.5)
-  socketio.emit('lockOperation')
-  print('lockSent')
-
-def sendUnlockOperation():
-  time.sleep(0.5)
-  socketio.emit('unlockOperation')
-  print('unlockSent')
-
 def getModelList() -> dict:
   responseDict: dict = {
     'supportModels': [],
@@ -68,18 +57,33 @@ def getModelList() -> dict:
 
   return responseDict
 
-@app.route('/')
+def flaskCustomRoute(flaskApp: Flask, route: str, **route_kwargs: dict[str: dict]):
+  def decorator(func: Callable):
+    @wraps(func)
+    def wrapper(*args: tuple, **kwargs: dict[str: dict]):  
+      if(isLockingApi):
+        return Response('Server is locking.', status = 500)
+      
+      return func(*args, **kwargs)
+    
+    flaskApp.route(route, **route_kwargs)(wrapper)
+
+    return wrapper
+
+  return decorator
+
+@flaskCustomRoute(app, '/')
 def routeMain():
   return render_template('index.html')
 
-@app.route('/getModelList')
+@flaskCustomRoute(app, '/getModelList')
 def routeGetModelList():
   responseDict: dict = getModelList()
   responseStr: str = json.dumps(responseDict)
 
   return responseStr
 
-@app.route('/talk')
+@flaskCustomRoute(app, '/talk')
 def routeTalk():
   queryInputText: str = request.args.get('inputText', '')
   llmResponse: str
@@ -94,21 +98,20 @@ def routeTalk():
   llmResponse = llmModel.talk(llmContextController.getContexts())
   llmContextController.addContext(LlmChatItem(LlmChatItemRoles.system, llmResponse))
 
-  # llmContextController.saveContexts()
-
   return llmResponse
 
-@app.route('/reloadModel')
+@flaskCustomRoute(app, '/reloadModel')
 def routeReloadModel():
   global llmModel
   global currentLlmModel
+  global isLockingApi
 
   queryModel: str = request.args.get('model', '')
   isSupportLlmModel: bool = False
   responseDict: dict
   responseStr: str
 
-  sendLockOperation()
+  isLockingApi = True
 
   for slm in SupportLlmModels:
     if(slm.name == queryModel):
@@ -125,14 +128,13 @@ def routeReloadModel():
   responseDict = getModelList()
   responseStr = json.dumps(responseDict)
 
-  sendUnlockOperation()
+  isLockingApi = False
 
   return responseStr
 
 if __name__ == '__main__':
   if(not FLASK_IS_DEBUG_MODE):
-    # llmModel = Llama3ElyzaJpGguf(MODEL_PATH_LLAMA3_ELYZA_JP_8B_Q6, True)
     llmModel = loadLlmModel(currentLlmModel)
     llmContextController: ContextController = ContextController('elyza8bQuant', False)
 
-  socketio.run(app, debug = FLASK_IS_DEBUG_MODE)
+  app.run(port = 5000, debug = FLASK_IS_DEBUG_MODE)
